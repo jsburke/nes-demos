@@ -1,0 +1,17 @@
+.include "nes_common.inc"
+.include "macros.inc"
+
+.segment "CODE"
+
+.proc main
+  store_double $3F00, PPU_ADDR
+  lda #$29
+  sta PPU_DATA
+  lda #$1E
+  sta PPU_MASK
+  self_jump
+.endproc
+
+.segment "CHR"
+.res 8192
+.segment "STARTUP"

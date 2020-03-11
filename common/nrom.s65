@@ -1,0 +1,9 @@
+.include "nes_common.inc"
+
+.import nmi_handler, irq_handler, reset_handler
+
+.segment "HEADER"
+.byte "NES", 26, 1, 1, 0, 0
+
+.segment "VECTORS"
+.addr nmi_handler, irq_handler, reset_handler
