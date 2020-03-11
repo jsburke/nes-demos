@@ -14,4 +14,3 @@
 
 .segment "CHR"
 .res 8192
-.segment "STARTUP"
