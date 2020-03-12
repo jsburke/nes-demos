@@ -1,11 +1,12 @@
 
-EMU ?= fceux
+EMU       ?= fceux
+EMU_FLAGS ?= --fullscreen
 
 build-%:
 	$(MAKE) -C ./src/$* all
 
 play-%: build-%
-	$(EMU) ./src/$*/$*.nes
+	$(EMU) $(EMU_FLAGS) ./src/$*/$*.nes
 
 clean:
 	@find . -name "*.o"   -type f -delete
