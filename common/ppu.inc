@@ -19,6 +19,7 @@ OAM_DATA   = $2004
 OAM_DMA    = $4014
 
   ;; Addresses on the PPU internal Memory Map
+  ;; Accessed by PPU or CPU via PPU_ADDR and PPU_DATA
 
 LEFT_PATTERN_TABLE_START  = $0000
 LEFT_PATTERN_TABLE_END    = $0FFF
@@ -58,6 +59,17 @@ PPU_SPRITE_COLORS_END     = $3F1F
 
 NAME_MIRROR_3_GAP_START   = $3F20
 NAME_MIRROR_3_GAP_END     = $3FFF
+
+  ;; Object Attribute Memory Arrays
+  ;; Accessed through OAM_ADDR, OAM_DATA, and OAM_DMA
+  ;; All of these are the start points or 4 byte arrays
+  ;; Increase by 4, 8, or C to get to further points
+
+OAM_POINT_Y               = $00
+OAM_TILE_NUM              = $01
+OAM_SPRITE_ATTR           = $02
+OAM_POINT_X               = $03
+
 
 .macro vblank_wait_loop
   : bit PPU_STATUS
