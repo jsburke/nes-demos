@@ -1,10 +1,6 @@
 
 .include "nes_common.inc"
-
-.macro vblankwait
-  : bit PPU_STATUS 
-    bpl :-  ;; back to top
-.endmacro
+.include "ppu.inc"
 
 .segment "CODE"
 
@@ -33,12 +29,12 @@
   sta APU_FRAME_CNT_IRQ_BLOCK ;; disable APU FRAME IRQ
 
 ;; first vblank wait to stabilize PPU
-  vblankwait
+  vblank_wait_loop
 
 ;; Do stuff like init oam, prg, chr, etc
 
 ;; second vblank wait
-  vblankwait
+  vblank_wait_loop
   jmp main
 .endproc
 
