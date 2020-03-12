@@ -38,8 +38,26 @@ NAME_TABLE_2_END          = $2BFF
 NAME_TABLE_3_START        = $2C00
 NAME_TABLE_3_END          = $2FFF
 
-PPU_BG_COLORS             = $3F00
-PPU_SPRITE_COLORS         = $3F10
+NAME_MIRROR_0_START       = $3000
+NAME_MIRROR_0_END         = $33FF
+
+NAME_MIRROR_1_START       = $3400
+NAME_MIRROR_1_END         = $37FF
+
+NAME_MIRROR_2_START       = $3800
+NAME_MIRROR_2_END         = $3BFF
+
+NAME_MIRROR_3_START       = $3C00  ;; note this mirror is fractured
+NAME_MIRROR_3_END         = $3EFF  ;; continues below
+
+PPU_BG_COLORS_START       = $3F00
+PPU_BG_COLORS_END         = $3F0F
+
+PPU_SPRITE_COLORS_START   = $3F10
+PPU_SPRITE_COLORS_END     = $3F1F
+
+NAME_MIRROR_3_GAP_START   = $3F20
+NAME_MIRROR_3_GAP_END     = $3FFF
 
 .macro vblank_wait_loop
   : bit PPU_STATUS
