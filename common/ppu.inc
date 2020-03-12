@@ -36,7 +36,7 @@ NAME_TABLE_2_START        = $2800
 NAME_TABLE_2_END          = $2BFF
 
 NAME_TABLE_3_START        = $2C00
-NAME_TABLE_3_END          = $2EFF
+NAME_TABLE_3_END          = $2FFF
 
 PPU_BG_COLORS             = $3F00
 PPU_SPRITE_COLORS         = $3F10
