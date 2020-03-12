@@ -8,6 +8,11 @@ build-%:
 play-%: build-%
 	$(EMU) $(EMU_FLAGS) ./src/$*/$*.nes
 
+test-%:
+	make clean
+	make play-$*
+
+.PHONY: clean
 clean:
 	@find . -name "*.o"   -type f -delete
 	@find . -name "*.nes" -type f -delete
