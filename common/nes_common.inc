@@ -6,21 +6,6 @@
 
 .global main, nmi_handler, irq_handler, reset_handler
 
-  ;; PPU addresses
-
-PPU_CTRL   = $2000
-PPU_MASK   = $2001
-PPU_STATUS = $2002
-PPU_SCROLL = $2005
-PPU_ADDR   = $2006
-PPU_DATA   = $2007
-
-  ;; OAM Addresses
-
-OAM_ADDR   = $2003
-OAM_DATA   = $2004
-OAM_DMA    = $4014
-
   ;; APU addresses
   ;;   most of these are bits or bit vectors
   ;;   in a given register at the address
