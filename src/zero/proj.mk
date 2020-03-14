@@ -1,3 +1,6 @@
 
+ROOT   = ../..
+COMMON = $(ROOT)/common
+
 NES    = zero.nes
-REQS   = zero.o ../../common/nrom.o ../../common/vectors.o 
+REQS   = zero.o $(COMMON)/nrom.o 
