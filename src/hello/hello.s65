@@ -1,0 +1,68 @@
+.include "nes_common.inc"
+.include "ppu.inc"
+.include "macros.inc"
+
+.segment "CODE"
+
+.proc irq_handler
+  rti
+.endproc
+
+.proc nmi_handler
+  rti
+.endproc
+
+.proc reset_handler
+  sei          ;; disable interrupts
+  cld          ;; no bcd mode
+  ldx #$FF
+  txs          ;; set sp to $01FF
+  inx          ;; x is zero now
+  stx PPU_CTRL ;; disable nmi 
+  stx PPU_MASK ;; disable rendering
+  stx DMC_IRQ_ENABLE
+  bit PPU_STATUS  ;; ack stray vblank
+  bit APU_STATUS_IRQ ;; ack dmc irq
+  lda #$0F
+  sta APU_CTRL ;; disable dmc playback but enable other channels
+  lda #$40
+  sta APU_FRAME_CNT_IRQ_BLOCK ;; disable APU FRAME IRQ
+
+;; first vblank wait to stabilize PPU
+  vblank_wait_loop
+
+;; Do stuff like init oam, prg, chr, etc
+
+;; second vblank wait
+  vblank_wait_loop
+
+;; lets do bg stuff
+
+  lda PPU_STATUS
+  lda #$0A
+  sta PPU_MASK ;; enable bg
+ 
+
+  ;; start writing the bg 
+  store_double $2000, PPU_ADDR
+  lda $FF
+  ldy $24
+  nt_write_0:
+    sta PPU_DATA
+    dey
+    bne nt_write_0
+  jmp main
+.endproc
+
+
+.proc main
+  store_double $3F00, PPU_ADDR
+  lda #$29
+  sta PPU_DATA
+  lda #$1E
+  sta PPU_MASK
+  self_jump
+.endproc
+
+.segment "CHR"
+.res 8192
