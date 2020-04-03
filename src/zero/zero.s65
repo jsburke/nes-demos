@@ -35,16 +35,6 @@
 
 ;; second vblank wait
   vblank_wait_loop
-  jmp main
-.endproc
-
-
-.proc main
-  store_double $3F00, PPU_ADDR
-  lda #$29
-  sta PPU_DATA
-  lda #$1E
-  sta PPU_MASK
   self_jump
 .endproc
 
