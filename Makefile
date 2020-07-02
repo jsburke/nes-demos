@@ -1,19 +1,13 @@
 
-EMU       ?= fceux
-EMU_FLAGS ?= --fullscreen
+games:
+	@mkdir games
 
-build-%:
+games/%.nes: games
 	$(MAKE) -C ./src/$* all
-
-play-%: build-%
-	$(EMU) $(EMU_FLAGS) ./src/$*/$*.nes
-
-test-%:
-	make clean
-	make play-$*
+	@mv ./src/$*/$*.nes $@
 
 .PHONY: clean
 clean:
 	@find . -name "*.o"   -type f -delete
-	@find . -name "*.nes" -type f -delete
 	@find . -name "*.map" -type f -delete
+	@rm -rf games
