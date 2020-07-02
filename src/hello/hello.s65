@@ -37,20 +37,16 @@
   vblank_wait_loop
 
 ;; lets do bg stuff
-
+;; palettes
   lda PPU_STATUS
-  lda #$0A
-  sta PPU_MASK ;; enable bg
- 
+  lda #$3F
+  sta PPU_ADDR
+  lda #$00
+  sta PPU_ADDR
+  ldx #$00
+load_palettes:
 
-  ;; start writing the bg 
-  store_double $2000, PPU_ADDR
-  lda $FF
-  ldy $24
-  nt_write_0:
-    sta PPU_DATA
-    dey
-    bne nt_write_0
+
   jmp main
 .endproc
 
