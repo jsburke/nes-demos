@@ -1,10 +1,17 @@
 
+GAMES = hello zero
+TARGS = $(addprefix games/,$(addsuffix .nes,$(GAMES)))
+
 games:
 	@mkdir games
 
 games/%.nes: games
 	$(MAKE) -C ./src/$* all
 	@mv ./src/$*/$*.nes $@
+
+.PHONY: all
+all:
+	make $(TARGS)
 
 .PHONY: clean
 clean:
