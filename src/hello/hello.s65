@@ -20,6 +20,8 @@
   inx          ;; x is zero now
   stx PPU_CTRL ;; disable nmi 
   stx PPU_MASK ;; disable rendering
+  stx PPU_SCROLL
+  stx PPU_SCROLL
   stx DMC_IRQ_ENABLE
   bit PPU_STATUS  ;; ack stray vblank
   bit APU_STATUS_IRQ ;; ack dmc irq
@@ -45,6 +47,11 @@
   sta PPU_ADDR
   ldx #$00
 load_palettes:
+  lda palettes, x
+  sta PPU_DATA
+  inx
+  cpx #$20
+  bne load_palettes
 
 
   jmp main
@@ -53,12 +60,21 @@ load_palettes:
 
 .proc main
   store_double $3F00, PPU_ADDR
-  lda #$29
+  lda #$11
   sta PPU_DATA
   lda #$1E
   sta PPU_MASK
   self_jump
 .endproc
 
-.segment "CHR"
-.res 8192
+.segment "RODATA"
+palettes:
+  .byte $0F, $11, $21, $18 ;; bg palette
+  .byte $0F, $00, $00, $00
+  .byte $0F, $00, $00, $00
+  .byte $0F, $00, $00, $00
+  .byte $0F, $20, $21, $15 ;; sprite palette
+  .byte $0F, $00, $00, $00
+  .byte $0F, $00, $00, $00
+  .byte $0F, $00, $00, $00
+
