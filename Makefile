@@ -2,6 +2,9 @@
 GAMES = hello zero
 TARGS = $(addprefix games/,$(addsuffix .nes,$(GAMES)))
 
+.PHONY: default
+default: all
+
 games:
 	@mkdir games
 
@@ -12,6 +15,11 @@ games/%.nes: games
 .PHONY: all
 all:
 	make $(TARGS)
+
+.PHONY: rebuild
+rebuild:
+	make clean
+	make all
 
 .PHONY: clean
 clean:
