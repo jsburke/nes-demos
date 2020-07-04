@@ -18,7 +18,7 @@ COMMON ?= $(ROOT)/common
 ##                                             ##
 #################################################
 
-AS_FLAGS  = -I$(COMMON) 
+AS_FLAGS  = -I$(COMMON)
 
 ifeq ($(DEBUG),1)
 AS_FLAGS += -g
