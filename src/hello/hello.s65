@@ -9,6 +9,18 @@
 .endproc
 
 .proc nmi_handler
+  lda #$00
+  sta OAM_ADDR
+  lda #02
+  sta OAM_DMA
+  
+  lda #%10010000 ;enable nmi, sprites table 0 bg table 1
+  sta PPU_CTRL
+  lda #%00011110 ;enable sprites bg no clip left
+  sta PPU_MASK
+  lda #$00
+  sta PPU_SCROLL
+  sta PPU_SCROLL
   rti
 .endproc
 
@@ -53,28 +65,72 @@ load_palettes:
   cpx #$20
   bne load_palettes
 
+;; background
+  lda PPU_STATUS
+  lda #$20
+  sta PPU_ADDR
+  lda #$00
+  sta PPU_ADDR
+  ldx #$00
+load_background:
+  lda background, x
+  sta PPU_DATA
+  inx
+  cpx #$80
+  bne load_background
+
+;; attribute
+  lda PPU_STATUS
+  lda #$23
+  sta PPU_ADDR
+  lda #$C0
+  sta PPU_ADDR
+  ldx #$00
+load_attributes:
+  lda attribute, x
+  sta PPU_DATA
+  inx
+  cpx #$08
+  bne load_attributes
+
+  lda #%10010000 ;; enable nmi, sprites from pt 0, bg from pt 1
+  sta PPU_CTRL
+  lda #%00011110 ;; enable sprites, bg
+  sta PPU_MASK
+ 
 
   jmp main
 .endproc
 
 
 .proc main
-  store_double $3F00, PPU_ADDR
-  lda #$11
-  sta PPU_DATA
-  lda #$1E
-  sta PPU_MASK
   self_jump
 .endproc
 
 .segment "RODATA"
 palettes:
-  .byte $0F, $11, $21, $18 ;; bg palette
-  .byte $0F, $00, $00, $00
-  .byte $0F, $00, $00, $00
-  .byte $0F, $00, $00, $00
+  .byte $22, $29, $1A, $0F ;; bg palette
+  .byte $22, $36, $17, $0F
+  .byte $22, $30, $21, $0F
+  .byte $22, $27, $17, $0F
   .byte $0F, $20, $21, $15 ;; sprite palette
   .byte $0F, $00, $00, $00
   .byte $0F, $00, $00, $00
   .byte $0F, $00, $00, $00
 
+background:
+  .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
+  .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
+  .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
+  .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
+  .byte $24,$24,$24,$24,$24,$24,$45,$24,$24,$24,$24,$24,$24,$24,$24,$24
+  .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
+  .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$44,$24,$24,$24,$24
+  .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
+
+attribute:
+  .byte %00000000, %00010000, %01010000, %00010000, %00000000, %00000000, %00000000, %00110000
+  .byte $24,$24,$24,$24, $47,$47,$24,$24 ,$47,$47,$47,$47, $47,$47,$24,$24, $24,$24,$24,$24 ,$24,$24,$24,$24, $24,$24,$24,$24, $55,$56,$24,$24
+
+.segment "CHR"
+  .incbin "mario.chr"
