@@ -16,7 +16,7 @@
   
   lda #%10010000 ;enable nmi, sprites table 0 bg table 1
   sta PPU_CTRL
-  lda #%00011110 ;enable sprites bg no clip left
+  lda #%00001110 ;enable sprites bg no clip left
   sta PPU_MASK
   lda #$00
   sta PPU_SCROLL
@@ -32,11 +32,9 @@
   inx          ;; x is zero now
   stx PPU_CTRL ;; disable nmi 
   stx PPU_MASK ;; disable rendering
-  stx PPU_SCROLL
-  stx PPU_SCROLL
   stx DMC_IRQ_ENABLE
-  bit PPU_STATUS  ;; ack stray vblank
-  bit APU_STATUS_IRQ ;; ack dmc irq
+  ;; bit PPU_STATUS  ;; ack stray vblank
+  ;; bit APU_STATUS_IRQ ;; ack dmc irq
   lda #$0F
   sta APU_CTRL ;; disable dmc playback but enable other channels
   lda #$40
@@ -64,6 +62,15 @@ load_palettes:
   inx
   cpx #$20
   bne load_palettes
+
+;; sprites
+  ldx #$00
+load_sprites:
+  lda sprites, x
+  sta $0200, x
+  inx
+  cpx #$10
+  bne load_sprites
 
 ;; background
   lda PPU_STATUS
@@ -95,7 +102,7 @@ load_attributes:
 
   lda #%10010000 ;; enable nmi, sprites from pt 0, bg from pt 1
   sta PPU_CTRL
-  lda #%00011110 ;; enable sprites, bg
+  lda #%00001110 ;; enable sprites, bg
   sta PPU_MASK
  
 
@@ -118,14 +125,20 @@ palettes:
   .byte $0F, $00, $00, $00
   .byte $0F, $00, $00, $00
 
+sprites:
+  .byte $80, $32, $00, $80
+  .byte $80, $33, $00, $88
+  .byte $80, $34, $00, $80
+  .byte $80, $35, $00, $88
+
 background:
   .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
   .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
   .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
   .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
-  .byte $24,$24,$24,$24,$24,$24,$45,$24,$24,$24,$24,$24,$24,$24,$24,$24
   .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
-  .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$44,$24,$24,$24,$24
+  .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
+  .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
   .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
 
 attribute:
