@@ -1,0 +1,7 @@
+# ignore what ca65 makes
+*.o
+*.nes
+*.map
+
+# ignore build dir
+/games
