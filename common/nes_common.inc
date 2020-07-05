@@ -1,8 +1,6 @@
 ;; 
 ;;  NES Common use constants and addresses
 ;;
-;;    common addresses and constants used for the nes ppu
-;;
 
 .global main, nmi_handler, irq_handler, reset_handler
 
