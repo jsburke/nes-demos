@@ -79,12 +79,32 @@ load_sprites:
   lda #$00
   sta PPU_ADDR
   ldx #$00
+  ldy #$00
 load_background:
   lda background, x
   sta PPU_DATA
   inx
   cpx #$80
   bne load_background
+  ldx #$00
+  iny
+  cpy #$08
+  bne load_background
+
+;; write hello
+  lda #$21
+  sta PPU_ADDR
+  lda #$CB
+  sta PPU_ADDR
+  lda #$11
+  sta PPU_DATA
+  lda #$0E
+  sta PPU_DATA
+  lda #$15
+  sta PPU_DATA
+  sta PPU_DATA
+  lda #$18
+  sta PPU_DATA
 
 ;; attribute
   lda PPU_STATUS
