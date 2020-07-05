@@ -16,9 +16,10 @@
   
   lda #%10010000 ;enable nmi, sprites table 0 bg table 1
   sta PPU_CTRL
-  lda #%00001110 ;enable sprites bg no clip left
+  lda #%00001110 ;enable bg no clip left
   sta PPU_MASK
   lda #$00
+  bit PPU_STATUS
   sta PPU_SCROLL
   sta PPU_SCROLL
   rti
@@ -117,7 +118,7 @@ load_attributes:
   lda attribute, x
   sta PPU_DATA
   inx
-  cpx #$08
+  cpx #$40
   bne load_attributes
 
   lda #%10010000 ;; enable nmi, sprites from pt 0, bg from pt 1
@@ -137,9 +138,9 @@ load_attributes:
 .segment "RODATA"
 palettes:
   .byte $22, $29, $1A, $0F ;; bg palette
-  .byte $22, $36, $17, $0F
-  .byte $22, $30, $21, $0F
-  .byte $22, $27, $17, $0F
+  .byte $11, $04, $1B, $0E
+  .byte $20, $15, $0A, $0A
+  .byte $13, $16, $07, $0B
   .byte $0F, $20, $21, $15 ;; sprite palette
   .byte $0F, $00, $00, $00
   .byte $0F, $00, $00, $00
@@ -162,8 +163,15 @@ background:
   .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
 
 attribute:
-  .byte %00000000, %00010000, %01010000, %00010000, %00000000, %00000000, %00000000, %00110000
-  .byte $24,$24,$24,$24, $47,$47,$24,$24 ,$47,$47,$47,$47, $47,$47,$24,$24, $24,$24,$24,$24 ,$24,$24,$24,$24, $24,$24,$24,$24, $55,$56,$24,$24
+  .byte $00, $00, $00, $00, $00, $00, $00, $00
+  .byte $00, $00, $00, $00, $00, $00, $00, $00
+  .byte $00, $00, $00, $00, $00, $00, $00, $00
+  .byte $00, $00, $00, $00, $00, $00, $00, $00
+  .byte $00, $00, $00, $00, $00, $00, $00, $00
+  .byte $00, $00, $00, $00, $00, $00, $00, $00
+  .byte $00, $00, $00, $00, $00, $00, $00, $00
+  .byte $00, $00, $00, $00, $00, $00, $00, $00
+ 
 
 .segment "CHR"
   .incbin "mario.chr"
