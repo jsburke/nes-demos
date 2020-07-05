@@ -11,6 +11,7 @@ DEBUG ?= 0
 
 ROOT   ?= .
 COMMON ?= $(ROOT)/common
+IMAGES ?= $(ROOT)/img
 
 #################################################
 ##                                             ##
@@ -18,7 +19,7 @@ COMMON ?= $(ROOT)/common
 ##                                             ##
 #################################################
 
-AS_FLAGS  = -I$(COMMON)
+AS_FLAGS  = -I$(COMMON) --bin-include-dir $(IMAGES)
 
 ifeq ($(DEBUG),1)
 AS_FLAGS += -g
