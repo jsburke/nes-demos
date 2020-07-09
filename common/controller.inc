@@ -23,10 +23,10 @@ BUTTON_A      = 1 << 7
 
 .macro player1_read buttons
   lda #$01
-  sta CONTROLLER1
+  sta CONTROLLER_1
   lsr a
-  sta CONTROLLER1
-  : lda CONTROLLER1
+  sta CONTROLLER_1
+  : lda CONTROLLER_1
     lsr a
     rol buttons
     bcc :-
