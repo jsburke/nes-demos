@@ -1,5 +1,5 @@
 
-GAMES = hello zero
+GAMES = hello zero controller
 TARGS = $(addprefix games/,$(addsuffix .nes,$(GAMES)))
 
 .PHONY: default

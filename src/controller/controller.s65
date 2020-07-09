@@ -1,0 +1,178 @@
+.include "nes_common.inc"
+.include "ppu.inc"
+.include "macros.inc"
+.include "controller.inc"
+
+.segment "CODE"
+
+.proc irq_handler
+  rti
+.endproc
+
+.proc nmi_handler
+  lda #$00
+  sta OAM_ADDR
+  lda #02
+  sta OAM_DMA
+  
+  lda #%10010000 ;enable nmi, sprites table 0 bg table 1
+  sta PPU_CTRL
+  lda #%00001110 ;enable bg no clip left
+  sta PPU_MASK
+  lda #$00
+  bit PPU_STATUS
+  sta PPU_SCROLL
+  sta PPU_SCROLL
+  rti
+.endproc
+
+.proc reset_handler
+  sei          ;; disable interrupts
+  cld          ;; no bcd mode
+  ldx #$FF
+  txs          ;; set sp to $01FF
+  inx          ;; x is zero now
+  stx PPU_CTRL ;; disable nmi 
+  stx PPU_MASK ;; disable rendering
+  stx DMC_IRQ_ENABLE
+  ;; bit PPU_STATUS  ;; ack stray vblank
+  ;; bit APU_STATUS_IRQ ;; ack dmc irq
+  lda #$0F
+  sta APU_CTRL ;; disable dmc playback but enable other channels
+  lda #$40
+  sta APU_FRAME_CNT_IRQ_BLOCK ;; disable APU FRAME IRQ
+
+;; first vblank wait to stabilize PPU
+  vblank_wait_loop
+
+;; Do stuff like init oam, prg, chr, etc
+
+;; second vblank wait
+  vblank_wait_loop
+
+;; lets do bg stuff
+;; palettes
+  lda PPU_STATUS
+  lda #$3F
+  sta PPU_ADDR
+  lda #$00
+  sta PPU_ADDR
+  ldx #$00
+load_palettes:
+  lda palettes, x
+  sta PPU_DATA
+  inx
+  cpx #$20
+  bne load_palettes
+
+;; sprites
+  ldx #$00
+load_sprites:
+  lda sprites, x
+  sta $0200, x
+  inx
+  cpx #$10
+  bne load_sprites
+
+;; background
+  lda PPU_STATUS
+  lda #$20
+  sta PPU_ADDR
+  lda #$00
+  sta PPU_ADDR
+  ldx #$00
+  ldy #$00
+load_background:
+  lda background, x
+  sta PPU_DATA
+  inx
+  cpx #$80
+  bne load_background
+  ldx #$00
+  iny
+  cpy #$08
+  bne load_background
+
+;; write hello
+  lda #$21
+  sta PPU_ADDR
+  lda #$CB
+  sta PPU_ADDR
+  lda #$11
+  sta PPU_DATA
+  lda #$0E
+  sta PPU_DATA
+  lda #$15
+  sta PPU_DATA
+  sta PPU_DATA
+  lda #$18
+  sta PPU_DATA
+
+;; attribute
+  lda PPU_STATUS
+  lda #$23
+  sta PPU_ADDR
+  lda #$C0
+  sta PPU_ADDR
+  ldx #$00
+load_attributes:
+  lda attribute, x
+  sta PPU_DATA
+  inx
+  cpx #$40
+  bne load_attributes
+
+  lda #%10010000 ;; enable nmi, sprites from pt 0, bg from pt 1
+  sta PPU_CTRL
+  lda #%00001110 ;; enable sprites, bg
+  sta PPU_MASK
+ 
+
+  jmp main
+.endproc
+
+
+.proc main
+  self_jump
+.endproc
+
+.segment "RODATA"
+palettes:
+  .byte $22, $29, $1A, $0F ;; bg palette
+  .byte $11, $04, $1B, $0E
+  .byte $20, $15, $0A, $0A
+  .byte $13, $16, $07, $0B
+  .byte $0F, $20, $21, $15 ;; sprite palette
+  .byte $0F, $00, $00, $00
+  .byte $0F, $00, $00, $00
+  .byte $0F, $00, $00, $00
+
+sprites:
+  .byte $80, $32, $00, $80
+  .byte $80, $33, $00, $88
+  .byte $80, $34, $00, $80
+  .byte $80, $35, $00, $88
+
+background:
+  .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
+  .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
+  .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
+  .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
+  .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
+  .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
+  .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
+  .byte $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24
+
+attribute:
+  .byte $00, $00, $00, $00, $00, $00, $00, $00
+  .byte $00, $00, $00, $00, $00, $00, $00, $00
+  .byte $00, $00, $00, $00, $00, $00, $00, $00
+  .byte $00, $00, $00, $00, $00, $00, $00, $00
+  .byte $00, $00, $00, $00, $00, $00, $00, $00
+  .byte $00, $00, $00, $00, $00, $00, $00, $00
+  .byte $00, $00, $00, $00, $00, $00, $00, $00
+  .byte $00, $00, $00, $00, $00, $00, $00, $00
+ 
+
+.segment "CHR"
+  .incbin "mario.chr"
