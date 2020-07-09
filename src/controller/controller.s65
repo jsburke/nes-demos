@@ -13,6 +13,8 @@ buttons: .res 1
 .endproc
 
 .proc nmi_handler
+  player1_read buttons
+  nop
   lda #$00
   sta OAM_ADDR
   lda #02
