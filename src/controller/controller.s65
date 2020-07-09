@@ -3,6 +3,9 @@
 .include "macros.inc"
 .include "controller.inc"
 
+.segment "ZEROPAGE"
+buttons: .res 1
+
 .segment "CODE"
 
 .proc irq_handler
