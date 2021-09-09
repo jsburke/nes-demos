@@ -5,6 +5,7 @@
 
 .segment "ZEROPAGE"
 buttons: .res 1
+left_on: .res 1
 
 .segment "CODE"
 
@@ -15,6 +16,10 @@ buttons: .res 1
 .proc nmi_handler
   player1_read buttons
   nop
+  lda 1
+  and buttons
+  sta left_on
+
   lda #$00
   sta OAM_ADDR
   lda #02
