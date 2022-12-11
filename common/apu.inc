@@ -1,0 +1,31 @@
+;;
+;;  Common use APU related addresses, code, and tools
+;;
+
+  ;; Addresses on the Main Memory Map
+  ;; APU addresses
+
+SQUARE1_VOLUME = $4000
+SQUARE1_SWEEP  = $4001
+SQUARE1_LOW    = $4002
+SQUARE1_HIGH   = $4003
+
+SQUARE2_VOLUME = $4004
+SQUARE2_SWEEP  = $4005
+SQUARE2_LOW    = $4006
+SQUARE2_HIGH   = $4007
+
+TRIANGLE_CTR   = $4008
+TRIANGLE_LOW   = $400A
+TRIANGLE_HIGH  = $400B
+
+NOISE_VOLUME   = $400C
+NOISE_LOW      = $400E
+NOISE_HIGH     = $400F
+
+DMC_FREQ  = $4010
+DMC_RAW   = $4011
+DMC_START = $4012
+DMC_LEN   = $4013
+
+SOUND_ENABLE = $4015
